@@ -100,7 +100,7 @@ class UserControllerTest {
         userCorrectId.setBirthday(LocalDate.of(2000,12,10));
 
         User userIncorrectId = new User();
-        userIncorrectId.setId(1);
+        userIncorrectId.setId(999);
         userIncorrectId.setEmail("test@mail.ru");
         userIncorrectId.setLogin("LoginChange");
         userIncorrectId.setName("Test");
@@ -110,7 +110,7 @@ class UserControllerTest {
         userController.userList.put(1, user);
         userController.changeUser(userCorrectId);
         ValidationException thrownExceptionIncorrectId = assertThrows(ValidationException.class,
-                () -> userController.createUser(userIncorrectId));
+                () -> userController.changeUser(userIncorrectId));
 
 
         assertEquals(userCorrectId, userController.userList.get(1));
