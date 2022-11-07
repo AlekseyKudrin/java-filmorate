@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -9,11 +10,14 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
+    UserController userController;
+    @BeforeEach
+    void beforeEach () {
+        userController = new UserController();
+    }
 
     @Test
     void createUser() {
-        UserController userController = new UserController();
-
         User user = new User();
         user.setEmail("test@mail.ru");
         user.setLogin("Login");
@@ -83,8 +87,6 @@ class UserControllerTest {
 
     @Test
     void changeUser() {
-        UserController userController = new UserController();
-
         User user = new User();
         user.setId(1);
         user.setEmail("test@mail.ru");
@@ -119,8 +121,6 @@ class UserControllerTest {
 
     @Test
     void getUserList() {
-        UserController userController = new UserController();
-
         User user1 = new User();
         user1.setEmail("test@mail.ru");
         user1.setLogin("Login");

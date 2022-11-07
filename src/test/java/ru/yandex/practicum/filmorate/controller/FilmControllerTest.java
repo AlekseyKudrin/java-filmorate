@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -9,11 +10,15 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilmControllerTest {
+    FilmController filmController;
+
+    @BeforeEach
+    void beforeEach() {
+        filmController = new FilmController();
+    }
 
     @Test
     void createFilm() {
-        FilmController filmController = new FilmController();
-
         Film filmAllData = new Film();
         filmAllData.setName("Test");
         filmAllData.setDescription("Test create Film");
@@ -75,8 +80,6 @@ class FilmControllerTest {
 
     @Test
     void changeFilm() {
-        FilmController filmController = new FilmController();
-
         Film film = new Film();
         film.setId(1);
         film.setName("Test");
@@ -113,8 +116,6 @@ class FilmControllerTest {
 
     @Test
     void getFilmList() {
-        FilmController filmController = new FilmController();
-
         Film film1 = new Film();
         film1.setId(1);
         film1.setName("Test");
