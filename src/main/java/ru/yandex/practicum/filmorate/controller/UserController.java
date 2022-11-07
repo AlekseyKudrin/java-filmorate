@@ -18,6 +18,25 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody User user) {
+        validateCreate(user);
+        log.info("Пользователь создан успешно");
+        return user;
+    }
+
+    @PutMapping
+    public User changeUser(@RequestBody User user) {
+        validateChange(user);
+        log.info("Позьзователь успешно изменен");
+        return user;
+    }
+
+    @GetMapping
+    public Collection<User> getUserList() {
+        log.info("Возврат списка пользователей");
+        return userList.values();
+    }
+
+    void validateCreate(User user) {
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
             log.trace ("Некорректно указан email");
             throw new ValidationException("Некорректно указан email");
@@ -35,26 +54,15 @@ public class UserController {
         }
         user.setId(id);
         userList.put(user.getId(), user);
-        log.info("Пользователь создан успешно");
         id++;
-        return user;
     }
 
-    @PutMapping
-    public User changeUser(@RequestBody User user) {
+    void validateChange(User user) {
         if (userList.containsKey(user.getId())) {
             userList.put(user.getId(), user);
-            log.info("Позьзователь успешно изменен");
-            return user;
         } else {
             log.trace("Пользователь не изменен");
             throw new ValidationException("Пользователь не изменен");
         }
-    }
-
-    @GetMapping
-    public Collection<User> getUserList() {
-        log.info("Возврат списка пользователей");
-        return userList.values();
     }
 }
