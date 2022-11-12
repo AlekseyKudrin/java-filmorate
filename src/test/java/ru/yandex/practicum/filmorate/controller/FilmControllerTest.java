@@ -70,7 +70,7 @@ class FilmControllerTest {
                 () -> filmController.createFilm(filmIncorrectDuration));
 
 
-        assertEquals(filmAllData, filmController.filmList.get(1));
+        assertEquals(filmAllData, filmController.filmService.filmStorage.getFilmList().get(1));
         assertTrue(thrownExceptionLength.getMessage().contains("Длинна описания не может привышать 200 символов"));
         assertTrue(thrownExceptionNameNull.getMessage().contains("Название не может быть пустым"));
         assertTrue(thrownExceptionNameEmpty.getMessage().contains("Название не может быть пустым"));
@@ -81,7 +81,6 @@ class FilmControllerTest {
     @Test
     void changeFilm() {
         Film film = new Film();
-        film.setId(1);
         film.setName("Test");
         film.setDescription("Test Film");
         film.setReleaseDate(LocalDate.of(1991,10,10));
@@ -102,13 +101,13 @@ class FilmControllerTest {
         filmIncorrectId.setDuration(60);
 
 
-        filmController.filmList.put(1, film);
+        filmController.createFilm(film);
         filmController.changeFilm(filmCorrectId);
         ValidationException thrownExceptionIncorrectId = assertThrows(ValidationException.class,
                 () -> filmController.changeFilm(filmIncorrectId));
 
 
-        assertEquals(filmCorrectId, filmController.filmList.get(1));
+        assertEquals(filmCorrectId, filmController.filmService.filmStorage.getFilmList().get(1));
         assertTrue(thrownExceptionIncorrectId.getMessage().contains("Изменения не внесены, данного фильма нет в базе"));
 
 
@@ -117,30 +116,27 @@ class FilmControllerTest {
     @Test
     void getFilmList() {
         Film film1 = new Film();
-        film1.setId(1);
         film1.setName("Test");
         film1.setDescription("Test Film");
         film1.setReleaseDate(LocalDate.of(1991,10,10));
         film1.setDuration(60);
 
         Film film2= new Film();
-        film2.setId(2);
         film2.setName("Test");
         film2.setDescription("Test Film");
         film2.setReleaseDate(LocalDate.of(1991,10,12));
         film2.setDuration(60);
 
         Film film3 = new Film();
-        film3.setId(3);
         film3.setName("Test");
         film3.setDescription("Test Film");
         film3.setReleaseDate(LocalDate.of(1991,10,10));
         film3.setDuration(60);
 
 
-        filmController.filmList.put(1, film1);
-        filmController.filmList.put(2, film2);
-        filmController.filmList.put(3, film3);
+        filmController.createFilm(film1);
+        filmController.createFilm(film2);
+        filmController.createFilm(film3);
 
 
         assertEquals(3, filmController.getFilmList().size());

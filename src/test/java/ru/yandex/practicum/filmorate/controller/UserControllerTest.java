@@ -72,7 +72,7 @@ class UserControllerTest {
                 () -> userController.createUser(userBirthdayAfterDateNow));
 
 
-        assertEquals(user, userController.userList.get(1));
+        assertEquals(user, userController.userService.userStorage.getUserList().get(1));
         assertTrue(thrownExceptionEmailEmpty.getMessage().contains("Некорректно указан email"),
                 "Тест, пустым email");
         assertTrue(thrownExceptionIncorrectEmail.getMessage().contains("Некорректно указан email"),
@@ -81,14 +81,13 @@ class UserControllerTest {
                 "Тест, логин пустой");
         assertTrue(thrownExceptionIncorrectLogin.getMessage().contains("Некорректно указан login"),
                 "Тест, логин содержит пробел");
-        assertEquals(userNameEmpty, userController.userList.get(2));
+        assertEquals(userNameEmpty, userController.userService.userStorage.getUserList().get(2));
         assertTrue(thrownExceptionBirthday.getMessage().contains("Некорректно указана дата рождения"));
     }
 
     @Test
     void changeUser() {
         User user = new User();
-        user.setId(1);
         user.setEmail("test@mail.ru");
         user.setLogin("Login");
         user.setName("Test");
@@ -109,13 +108,13 @@ class UserControllerTest {
         userIncorrectId.setBirthday(LocalDate.of(2000,12,10));
 
 
-        userController.userList.put(1, user);
+        userController.createUser(user);
         userController.changeUser(userCorrectId);
         ValidationException thrownExceptionIncorrectId = assertThrows(ValidationException.class,
                 () -> userController.changeUser(userIncorrectId));
 
 
-        assertEquals(userCorrectId, userController.userList.get(1));
+        assertEquals(userCorrectId, userController.userService.userStorage.getUserList().get(1));
         assertTrue(thrownExceptionIncorrectId.getMessage().contains("Пользователь не изменен"));
     }
 
@@ -140,11 +139,11 @@ class UserControllerTest {
         user3.setBirthday(LocalDate.of(2000,12,10));
 
 
-        userController.userList.put(1, user1);
-        userController.userList.put(2, user2);
-        userController.userList.put(3, user3);
+        userController.createUser(user1);
+        userController.createUser(user2);
+        userController.createUser(user3);
 
 
-        assertEquals(3, userController.userList.size());
+        assertEquals(3, userController.getUserList().size());
     }
 }

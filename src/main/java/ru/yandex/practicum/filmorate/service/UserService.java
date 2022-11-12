@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -13,7 +12,7 @@ import java.util.Collection;
 @Slf4j
 @Service
 public class UserService {
-    private InMemoryUserStorage userStorage;
+    public InMemoryUserStorage userStorage;
 
     public UserService() {
         this.userStorage = new InMemoryUserStorage();
@@ -55,5 +54,4 @@ public class UserService {
             throw new ValidationException("Некорректно указана дата рождения");
         }
     }
-
 }

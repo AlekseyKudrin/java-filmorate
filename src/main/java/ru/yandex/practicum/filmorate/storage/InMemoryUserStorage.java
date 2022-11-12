@@ -11,7 +11,7 @@ import java.util.Map;
 public class InMemoryUserStorage implements UserStorage {
 
     int id = 1;
-    public final Map<Integer, User> userList = new HashMap<>();
+    private final Map<Integer, User> userList = new HashMap<>();
 
     public Map<Integer, User> getUserList() {
         return userList;
