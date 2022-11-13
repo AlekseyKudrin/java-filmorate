@@ -1,21 +1,24 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Service
 public class FilmService {
-    public InMemoryFilmStorage filmStorage;
+    public FilmStorage filmStorage;
 
-    public FilmService() {
-        this.filmStorage = new InMemoryFilmStorage();
+    @Autowired
+    public FilmService(FilmStorage inMemoryFilmStorage) {
+        this.filmStorage =  inMemoryFilmStorage;
     }
 
     public void create(Film film){
@@ -36,6 +39,19 @@ public class FilmService {
     public Collection<Film> getFilmList() {
         return filmStorage.getFilmList().values();
     }
+
+    public void addLike() {
+
+    }
+
+    public void deleteLike() {
+
+    }
+
+    public Collection<Film> returnPopFilms () {
+        return List.of();
+    }
+
 
     private void validateOfFilm (Film film) {
         if (film.getName() == null || film.getName().length() == 0) {

@@ -13,6 +13,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     private int id = 1;
     private final Map<Integer, Film> filmList = new HashMap<>();
 
+    @Override
     public Map<Integer, Film> getFilmList() {
         return filmList;
     }
@@ -30,5 +31,15 @@ public class InMemoryFilmStorage implements FilmStorage{
         } else {
             throw new ValidationException("Найден дубль в БД");
         }
+    }
+
+    @Override
+    public void delete() {
+
+    }
+
+    @Override
+    public void search() {
+
     }
 }
