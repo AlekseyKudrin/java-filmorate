@@ -26,8 +26,6 @@ public class UserController {
         return user;
     }
 
-
-
     @PutMapping
     public User changeUser(@RequestBody User user) {
         userService.change(user);

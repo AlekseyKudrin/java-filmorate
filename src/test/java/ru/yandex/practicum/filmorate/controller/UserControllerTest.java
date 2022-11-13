@@ -117,7 +117,7 @@ class UserControllerTest {
 
 
         assertEquals(userCorrectId, userController.userService.userStorage.getUserList().get(1));
-        assertTrue(thrownExceptionIncorrectId.getMessage().contains("Пользователь не изменен"));
+        assertTrue(thrownExceptionIncorrectId.getMessage().contains("Пользователь не найден"));
     }
 
     @Test

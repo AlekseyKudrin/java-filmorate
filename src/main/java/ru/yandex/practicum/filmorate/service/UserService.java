@@ -5,11 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -26,17 +27,6 @@ public class UserService {
         userStorage.add(user);
     }
 
-    //Старый метод
-    public void change2(User user) {
-        if (userStorage.getUserList().containsKey(user.getId())) {
-            validateOfUser(user);
-            userStorage.change(user);
-        } else {
-            log.trace("Пользователь не изменен");
-            throw new ValidationException("Пользователь не изменен");
-        }
-
-    }
     public void change(User user) {
         validateOfUser(user);
         userStorage.change(user);
@@ -92,7 +82,7 @@ public class UserService {
             log.trace("Некорректно указан login");
             throw new ValidationException("Некорректно указан login");
         }
-        if (user.getName() == null) {
+        if (user.getName() == null || user.getName().length() == 0) {
             user.setName(user.getLogin());
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
