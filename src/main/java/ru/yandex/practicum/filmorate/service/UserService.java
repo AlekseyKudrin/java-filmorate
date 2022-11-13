@@ -9,8 +9,7 @@ import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -55,21 +54,33 @@ public class UserService {
     public void addInFriend(int id, int friendId) {
         User user = userStorage.getUserById(id);
         User friend = userStorage.getUserById(friendId);
-        user.getFriends().add(friend);
+        user.addFriend(friend);
     }
 
     public void deleteInFriend(int id, int friendId) {
         User user = userStorage.getUserById(id);
         User friend = userStorage.getUserById(friendId);
-        user.getFriends().remove(friend);
+        user.deleteFriend(friend);
     }
 
     public Collection<User> getFriends(int id) {
-        return List.of();
+        return userStorage.getUserById(id).getFriends();
     }
 
     public Collection<User> getFriends(int id, int otherId) {
-        return List.of();
+        User user = userStorage.getUserById(id);
+        User otherUser = userStorage.getUserById(otherId);
+
+        List<User> generalFriends = new ArrayList<>();
+
+        for(User tempUser : user.getFriends()){
+            for(User otherTempUser : otherUser.getFriends()){
+                if(tempUser.equals(otherTempUser)) {
+                    generalFriends.add(tempUser);
+                }
+            }
+        }
+        return generalFriends;
     }
 
     private void validateOfUser(User user) {

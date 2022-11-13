@@ -16,5 +16,13 @@ public class User {
     String login;
     String name;
     LocalDate birthday;
-    Set<User> friends = new HashSet<>();
+    final Set<User> friends = new HashSet<>();
+
+    public void addFriend(User user) {
+        friends.add(user);
+    }
+
+    public void deleteFriend(User user) {
+        friends.remove(user);
+    }
 }
