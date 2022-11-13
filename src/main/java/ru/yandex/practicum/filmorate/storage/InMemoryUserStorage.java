@@ -28,6 +28,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void change(User user) {
+        validateId(user.getId());
         if (!userList.containsValue(user)) {
             userList.put(user.getId(), user);
         } else {
@@ -43,6 +44,12 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void search() {
 
+    }
+
+    @Override
+    public User getUserById(int id) {
+        validateId(id);
+        return userList.get(id);
     }
 
     @Override

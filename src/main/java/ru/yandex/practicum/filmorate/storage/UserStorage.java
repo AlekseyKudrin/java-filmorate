@@ -17,4 +17,6 @@ public interface UserStorage {
     void search();
 
     void validateId (int id);
+
+    User getUserById(int id);
 }

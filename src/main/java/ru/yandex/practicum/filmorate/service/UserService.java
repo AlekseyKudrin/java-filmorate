@@ -39,10 +39,9 @@ public class UserService {
 
     }
     public void change(User user) {
-            userStorage.validateId(user.getId());
-            validateOfUser(user);
-            userStorage.change(user);
-            log.trace("Пользователь изменен");
+        validateOfUser(user);
+        userStorage.change(user);
+        log.trace("Пользователь изменен");
     }
 
     public Collection<User> getUsersList() {
@@ -50,21 +49,28 @@ public class UserService {
     }
 
     public User getUser(int id) {
-        return userStorage.getUserList().get(id);
+        return userStorage.getUserById(id);
     }
 
-    public void addInFriend() {
-
+    public void addInFriend(int id, int friendId) {
+        User user = userStorage.getUserById(id);
+        User friend = userStorage.getUserById(friendId);
+        user.getFriends().add(friend);
     }
 
-    public void deleteInFriend() {
-
+    public void deleteInFriend(int id, int friendId) {
+        User user = userStorage.getUserById(id);
+        User friend = userStorage.getUserById(friendId);
+        user.getFriends().remove(friend);
     }
 
-    public Collection<User> returnUserFriend() {
+    public Collection<User> getFriends(int id) {
         return List.of();
     }
 
+    public Collection<User> getFriends(int id, int otherId) {
+        return List.of();
+    }
 
     private void validateOfUser(User user) {
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
