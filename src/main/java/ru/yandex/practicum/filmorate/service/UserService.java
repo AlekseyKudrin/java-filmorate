@@ -9,9 +9,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -45,35 +43,52 @@ public class UserService {
     public void addInFriend(int id, int friendId) {
         User user = userStorage.getUserById(id);
         User friend = userStorage.getUserById(friendId);
-        user.addFriend(friend);
-        friend.addFriend(user);// падает программа
+        user.addFriend(friend.getId());
+        friend.addFriend(user.getId());// падает программа
     }
 
     public void deleteInFriend(int id, int friendId) {
         User user = userStorage.getUserById(id);
         User friend = userStorage.getUserById(friendId);
-        user.deleteFriend(friend);
-        friend.deleteFriend(user);
+        user.deleteFriend(friend.getId());
+        friend.deleteFriend(user.getId());
     }
 
     public Collection<User> getFriends(int id) {
-        return userStorage.getUserById(id).getFriends();
+        Map<Integer, User> listFriends = new HashMap<>();
+        Set<Integer> listIdFriends = userStorage.getUserById(id).getFriends();
+        for (Integer user : listIdFriends) {
+            for (Integer userId : userStorage.getUserList().keySet()) {
+                if (user.equals(userId)) {
+                    listFriends.put(user, userStorage.getUserList().get(userId));
+                }
+            }
+        }
+        return listFriends.values();
     }
 
     public Collection<User> getFriends(int id, int otherId) {
         User user = userStorage.getUserById(id);
         User otherUser = userStorage.getUserById(otherId);
 
-        List<User> generalFriends = new ArrayList<>();
+        Map<Integer, User> listFriends = new HashMap<>();
+        List<Integer> generalFriends = new ArrayList<>();
 
-        for(User tempUser : user.getFriends()){
-            for(User otherTempUser : otherUser.getFriends()){
+        for(Integer tempUser : user.getFriends()){
+            for(Integer otherTempUser : otherUser.getFriends()){
                 if(tempUser.equals(otherTempUser)) {
                     generalFriends.add(tempUser);
                 }
             }
         }
-        return generalFriends;
+        for (Integer idS : generalFriends) {
+            for (Integer userId : userStorage.getUserList().keySet()) {
+                if (idS.equals(userId)) {
+                    listFriends.put(idS, userStorage.getUserList().get(userId));
+                }
+            }
+        }
+        return listFriends.values();
     }
 
     private void validateOfUser(User user) {
