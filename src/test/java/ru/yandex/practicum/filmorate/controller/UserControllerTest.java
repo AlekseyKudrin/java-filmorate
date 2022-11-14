@@ -2,12 +2,14 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,16 +63,16 @@ class UserControllerTest {
 
 
         userController.createUser(user);
-        ValidationException thrownExceptionEmailEmpty = assertThrows(ValidationException.class,
+        ResponseStatusException thrownExceptionEmailEmpty = assertThrows(ResponseStatusException.class,
                 () -> userController.createUser(userEmailEmpty));
-        ValidationException thrownExceptionIncorrectEmail = assertThrows(ValidationException.class,
+        ResponseStatusException thrownExceptionIncorrectEmail = assertThrows(ResponseStatusException.class,
                 () -> userController.createUser(userIncorrectEmail));
-        ValidationException thrownExceptionLoginEmpty = assertThrows(ValidationException.class,
+        ResponseStatusException thrownExceptionLoginEmpty = assertThrows(ResponseStatusException.class,
                 () -> userController.createUser(userLoginEmpty));
-        ValidationException thrownExceptionIncorrectLogin = assertThrows(ValidationException.class,
+        ResponseStatusException thrownExceptionIncorrectLogin = assertThrows(ResponseStatusException.class,
                 () -> userController.createUser(userIncorrectLogin));
         userController.createUser(userNameEmpty);
-        ValidationException thrownExceptionBirthday = assertThrows(ValidationException.class,
+        ResponseStatusException thrownExceptionBirthday = assertThrows(ResponseStatusException.class,
                 () -> userController.createUser(userBirthdayAfterDateNow));
 
 
@@ -147,5 +149,34 @@ class UserControllerTest {
 
 
         assertEquals(3, userController.getUserList().size());
+    }
+
+    @Test
+    void addInFriend() {
+        User userOne = new User();
+        userOne.setEmail("test@mail.ru");
+        userOne.setLogin("Login");
+        userOne.setName("TestOne");
+        userOne.setBirthday(LocalDate.of(2000,12,10));
+
+        User userTwo = new User();
+        userTwo.setEmail("testTwo@mail.ru");
+        userTwo.setLogin("LoginTwo");
+        userTwo.setName("TestTwo");
+        userTwo.setBirthday(LocalDate.of(2000,12,12));
+
+        userController.createUser(userOne);
+        userController.createUser(userTwo);
+        ArrayList<User> userOneFriends = new ArrayList<>();
+        ArrayList<User> userTwoFriends = new ArrayList<>();
+        userOneFriends.add(userTwo);
+        userTwoFriends.add(userOne);
+
+
+        userController.addInFriend(1,2);
+
+        assertEquals(userOneFriends, userController.userService.userStorage.getUserList().get(1).getFriends());
+        assertEquals(userTwoFriends, userController.userService.userStorage.getUserList().get(2).getFriends());
+
     }
 }
