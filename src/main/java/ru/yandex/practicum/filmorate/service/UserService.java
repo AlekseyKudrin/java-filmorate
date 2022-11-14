@@ -45,12 +45,14 @@ public class UserService {
         User user = userStorage.getUserById(id);
         User friend = userStorage.getUserById(friendId);
         user.addFriend(friend);
+        //friend.addFriend(user);// падает программа
     }
 
     public void deleteInFriend(int id, int friendId) {
         User user = userStorage.getUserById(id);
         User friend = userStorage.getUserById(friendId);
         user.deleteFriend(friend);
+        friend.deleteFriend(user);
     }
 
     public Collection<User> getFriends(int id) {

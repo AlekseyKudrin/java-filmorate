@@ -16,5 +16,13 @@ public class Film {
     String description;
     LocalDate releaseDate;
     int duration;
-    Set<Film> likes = new HashSet<>();
+    Set<Integer> likes = new HashSet<>();
+
+    public void addLike(int userId) {
+        likes.add(userId);
+    }
+
+    public void deleteLike(int userId) {
+        likes.remove(userId);
+    }
 }

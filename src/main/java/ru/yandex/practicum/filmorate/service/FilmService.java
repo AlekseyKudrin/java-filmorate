@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
@@ -27,28 +28,28 @@ public class FilmService {
     }
 
     public void change(Film film) {
-        if (filmStorage.getFilmList().containsKey(film.getId())) {
-            validateOfFilm(film);
-            filmStorage.change(film);
-        } else {
-            log.trace("Фильм не изменен");
-            throw new ValidationException("Изменения не внесены, данного фильма нет в базе");
+        validateOfFilm(film);
+        filmStorage.change(film);
+        log.trace("Фильм изменен");
         }
-    }
 
     public Collection<Film> getFilmList() {
         return filmStorage.getFilmList().values();
     }
 
-    public void addLike() {
-
+    public void addLike(int id, int userId) {
+        Film film = filmStorage.getFilmById(id);
+        film.addLike(userId);
+        log.trace("Лайк добавлен");
     }
 
-    public void deleteLike() {
-
+    public void deleteLike(int id, int userId) {
+        Film film = filmStorage.getFilmById(id);
+        film.deleteLike(userId);
+        log.trace("Лайк удален");
     }
 
-    public Collection<Film> returnPopFilms () {
+    public Collection<Film> returnPopFilms (int count) {
         return List.of();
     }
 

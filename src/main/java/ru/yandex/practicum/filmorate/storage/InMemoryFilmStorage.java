@@ -20,12 +20,14 @@ public class InMemoryFilmStorage implements FilmStorage{
 
     @Override
     public void add(Film film) {
+        film.setId(id);
         filmList.put(id,film);
         id++;
     }
 
     @Override
     public void change(Film film) {
+        validateId(film.getId());
         if (!filmList.containsValue(film)) {
             filmList.put(film.getId(), film);
         } else {
@@ -41,5 +43,18 @@ public class InMemoryFilmStorage implements FilmStorage{
     @Override
     public void search() {
 
+    }
+
+    @Override
+    public Film getFilmById(int id) {
+        validateId(id);
+        return filmList.get(id);
+    }
+
+    @Override
+    public void validateId (int id) {
+        if (!filmList.containsKey(id)) {
+            throw new ValidationException("Фильм не найден");
+        }
     }
 }
