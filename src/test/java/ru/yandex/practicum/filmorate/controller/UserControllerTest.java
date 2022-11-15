@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -167,10 +169,10 @@ class UserControllerTest {
 
         userController.createUser(userOne);
         userController.createUser(userTwo);
-        ArrayList<User> userOneFriends = new ArrayList<>();
-        ArrayList<User> userTwoFriends = new ArrayList<>();
-        userOneFriends.add(userTwo);
-        userTwoFriends.add(userOne);
+        Set<Integer> userOneFriends = new HashSet<>();
+        Set<Integer> userTwoFriends = new HashSet<>();
+        userOneFriends.add(userTwo.getId());
+        userTwoFriends.add(userOne.getId());
 
 
         userController.addInFriend(1,2);

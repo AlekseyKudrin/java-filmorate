@@ -74,17 +74,17 @@ public class UserService {
         Map<Integer, User> listFriends = new HashMap<>();
         List<Integer> generalFriends = new ArrayList<>();
 
-        for(Integer tempUser : user.getFriends()){
+        for(Integer userId : user.getFriends()){
             for(Integer otherTempUser : otherUser.getFriends()){
-                if(tempUser.equals(otherTempUser)) {
-                    generalFriends.add(tempUser);
+                if(userId.equals(otherTempUser)) {
+                    generalFriends.add(userId);
                 }
             }
         }
-        for (Integer idS : generalFriends) {
+        for (Integer generalId : generalFriends) {
             for (Integer userId : userStorage.getUserList().keySet()) {
-                if (idS.equals(userId)) {
-                    listFriends.put(idS, userStorage.getUserList().get(userId));
+                if (generalId.equals(userId)) {
+                    listFriends.put(generalId, userStorage.getUserList().get(userId));
                 }
             }
         }

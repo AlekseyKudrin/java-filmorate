@@ -62,8 +62,6 @@ public class FilmService {
         Map<Integer, Integer> amountLike = new HashMap<>();// Не отсортированный список лайков
         Map<Integer, Integer> sortLike;// Отсортированный список по кол-ву лайков
 
-        amountLike.
-
         Map<Integer, Film> sortFilm = new LinkedHashMap<>(); //Отсортированный список фильмов по кол-ву лайков
         Map<Integer, Film> countFilms = new LinkedHashMap<>();// Список состоящий из Count=количества фильмов
         if (!(count < 0)) {
@@ -96,7 +94,7 @@ public class FilmService {
 
     public Collection<Film> returnPop (int count) {
         Collection<Film> col =  filmStorage.getFilmList().values();
-        col.stream().sorted()
+        return List.of();
     }
 
 
