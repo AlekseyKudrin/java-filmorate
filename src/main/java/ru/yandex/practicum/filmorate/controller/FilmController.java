@@ -2,7 +2,10 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ErrorResponse;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -47,8 +50,13 @@ public class FilmController {
         return filmService.getFilmList();
     }
 
-    @GetMapping("popular?count={count}")
-    public Collection<Film> getPopFilms(@PathVariable(required = false) int count) {
+    @GetMapping("{id}")
+    public Film getFilm(@PathVariable int id) {
+        return filmService.getFilm(id);
+    }
+
+    @GetMapping("popular")
+    public Collection<Film> getPopFilms(@RequestParam(defaultValue = "10") Integer count) {
         log.info("Возвтрат списка популярных фильмов");
         return filmService.returnPopFilms(count);
     }
@@ -57,5 +65,11 @@ public class FilmController {
     public void deleteLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Удаление лайка");
         filmService.deleteLike(id, userId);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse hande(final ValidationException e) {
+        return new ErrorResponse(e.getMessage());
     }
 }

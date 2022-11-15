@@ -44,7 +44,7 @@ public class UserService {
         User user = userStorage.getUserById(id);
         User friend = userStorage.getUserById(friendId);
         user.addFriend(friend.getId());
-        friend.addFriend(user.getId());// падает программа
+        friend.addFriend(user.getId());
     }
 
     public void deleteInFriend(int id, int friendId) {
