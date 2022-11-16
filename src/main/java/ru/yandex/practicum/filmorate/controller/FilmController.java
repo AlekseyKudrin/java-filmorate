@@ -58,7 +58,7 @@ public class FilmController {
     @GetMapping("popular")
     public Collection<Film> getPopFilms(@RequestParam(defaultValue = "10") Integer count) {
         log.info("Возвтрат списка популярных фильмов");
-        return filmService.returnPopFilms(count);
+        return filmService.returnPop(count);
     }
 
     @DeleteMapping("{id}/like/{userId}")

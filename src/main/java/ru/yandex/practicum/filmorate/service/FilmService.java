@@ -53,9 +53,13 @@ public class FilmService {
     }
 
     public void deleteLike(int id, int userId) {
-        Film film = filmStorage.getFilmById(id);
-        film.deleteLike(userId);
-        log.trace("Лайк удален");
+        if (userId > 0) {
+            Film film = filmStorage.getFilmById(id);
+            film.deleteLike(userId);
+            log.trace("Лайк удален");
+        } else {
+            throw new ValidationException("Id пользователя не может быть отрицательным");
+        }
     }
 
     public Collection<Film> returnPopFilms (int count) {
@@ -94,7 +98,9 @@ public class FilmService {
 
     public Collection<Film> returnPop (int count) {
         Collection<Film> col =  filmStorage.getFilmList().values();
-        return List.of();
+        return col.stream().sorted((o1, o2) -> Integer.compare(o2.getLikes().size(), o1.getLikes().size()))
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
 
