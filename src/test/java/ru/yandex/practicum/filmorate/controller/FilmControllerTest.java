@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -60,15 +61,15 @@ class FilmControllerTest {
 
 
         filmController.createFilm(filmAllData);
-        ValidationException thrownExceptionLength = assertThrows(ValidationException.class,
+        ResponseStatusException thrownExceptionLength = assertThrows(ResponseStatusException.class,
                 () -> filmController.createFilm(filmLength));
-        ValidationException thrownExceptionNameNull = assertThrows(ValidationException.class,
+        ResponseStatusException thrownExceptionNameNull = assertThrows(ResponseStatusException.class,
                 () -> filmController.createFilm(filmNotName));
-        ValidationException thrownExceptionNameEmpty = assertThrows(ValidationException.class,
+        ResponseStatusException thrownExceptionNameEmpty = assertThrows(ResponseStatusException.class,
                 () -> filmController.createFilm(filmNameEmpty));
-        ValidationException thrownExceptionNReleaseDate = assertThrows(ValidationException.class,
+        ResponseStatusException thrownExceptionNReleaseDate = assertThrows(ResponseStatusException.class,
                 () -> filmController.createFilm(filmIncorrectReleaseDate));
-        ValidationException thrownExceptionIncorrectDuration = assertThrows(ValidationException.class,
+        ResponseStatusException thrownExceptionIncorrectDuration = assertThrows(ResponseStatusException.class,
                 () -> filmController.createFilm(filmIncorrectDuration));
 
 
@@ -110,7 +111,7 @@ class FilmControllerTest {
 
 
         assertEquals(filmCorrectId, filmController.filmService.filmStorage.getFilmList().get(1));
-        assertTrue(thrownExceptionIncorrectId.getMessage().contains("Изменения не внесены, данного фильма нет в базе"));
+        assertTrue(thrownExceptionIncorrectId.getMessage().contains("Фильм не найден"));
 
 
     }
