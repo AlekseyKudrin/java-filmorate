@@ -31,18 +31,8 @@ public class InMemoryFilmStorage implements FilmStorage{
         if (!filmList.containsValue(film)) {
             filmList.put(film.getId(), film);
         } else {
-            throw new ValidationException("Найден дубль в БД");
+            throw new ValidationException("duplicate found in database");
         }
-    }
-
-    @Override
-    public void delete() {
-
-    }
-
-    @Override
-    public void search() {
-
     }
 
     @Override
@@ -54,7 +44,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     @Override
     public void validateId (int id) {
         if (!filmList.containsKey(id)) {
-            throw new ValidationException("Фильм не найден");
+            throw new ValidationException("Film not found");
         }
     }
 }

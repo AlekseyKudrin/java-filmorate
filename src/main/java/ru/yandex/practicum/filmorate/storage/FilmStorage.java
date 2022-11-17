@@ -12,10 +12,6 @@ public interface FilmStorage {
 
     Map<Integer, Film> getFilmList();
 
-    void delete();
-
-    void search();
-
     Film getFilmById(int id);
 
     void validateId (int id);

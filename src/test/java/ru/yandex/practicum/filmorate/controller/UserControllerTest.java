@@ -2,17 +2,13 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.exception.IncorrectValueException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,30 +62,26 @@ class UserControllerTest {
 
 
         userController.createUser(user);
-        ResponseStatusException thrownExceptionEmailEmpty = assertThrows(ResponseStatusException.class,
+        IncorrectValueException thrownExceptionEmailEmpty = assertThrows(IncorrectValueException.class,
                 () -> userController.createUser(userEmailEmpty));
-        ResponseStatusException thrownExceptionIncorrectEmail = assertThrows(ResponseStatusException.class,
+        IncorrectValueException thrownExceptionIncorrectEmail = assertThrows(IncorrectValueException.class,
                 () -> userController.createUser(userIncorrectEmail));
-        ResponseStatusException thrownExceptionLoginEmpty = assertThrows(ResponseStatusException.class,
+        IncorrectValueException thrownExceptionLoginEmpty = assertThrows(IncorrectValueException.class,
                 () -> userController.createUser(userLoginEmpty));
-        ResponseStatusException thrownExceptionIncorrectLogin = assertThrows(ResponseStatusException.class,
+        IncorrectValueException thrownExceptionIncorrectLogin = assertThrows(IncorrectValueException.class,
                 () -> userController.createUser(userIncorrectLogin));
         userController.createUser(userNameEmpty);
-        ResponseStatusException thrownExceptionBirthday = assertThrows(ResponseStatusException.class,
+        IncorrectValueException thrownExceptionBirthday = assertThrows(IncorrectValueException.class,
                 () -> userController.createUser(userBirthdayAfterDateNow));
 
 
-        assertEquals(user, userController.userService.getUsersList());
-        assertTrue(thrownExceptionEmailEmpty.getMessage().contains("Некорректно указан email"),
-                "Тест, пустым email");
-        assertTrue(thrownExceptionIncorrectEmail.getMessage().contains("Некорректно указан email"),
-                "Тест, email не содержит @");
-        assertTrue(thrownExceptionLoginEmpty.getMessage().contains("Некорректно указан login"),
-                "Тест, логин пустой");
-        assertTrue(thrownExceptionIncorrectLogin.getMessage().contains("Некорректно указан login"),
-                "Тест, логин содержит пробел");
-        assertEquals(userNameEmpty, userController.userService.getUsersList());
-        assertTrue(thrownExceptionBirthday.getMessage().contains("Некорректно указана дата рождения"));
+        assertEquals(user, userController.getUser(1));
+        assertTrue(thrownExceptionEmailEmpty.getMessage().contains("Email empty or not contains character @"));
+        assertTrue(thrownExceptionIncorrectEmail.getMessage().contains("Email empty or not contains character @"));
+        assertTrue(thrownExceptionLoginEmpty.getMessage().contains("login cannot be empty or not must contains character space"));
+        assertTrue(thrownExceptionIncorrectLogin.getMessage().contains("login cannot be empty or not must contains character space"));
+        assertEquals(userNameEmpty, userController.getUser(2));
+        assertTrue(thrownExceptionBirthday.getMessage().contains("Date birthday can't be after time now"));
     }
 
     @Test
@@ -121,8 +113,8 @@ class UserControllerTest {
                 () -> userController.changeUser(userIncorrectId));
 
 
-        assertEquals(userCorrectId, userController.userService.getUsersList());
-        assertTrue(thrownExceptionIncorrectId.getMessage().contains("Пользователь не найден"));
+        assertEquals(userCorrectId, userController.getUser(1));
+        assertTrue(thrownExceptionIncorrectId.getMessage().contains("User not found"));
     }
 
     @Test
@@ -170,16 +162,12 @@ class UserControllerTest {
 
         userController.createUser(userOne);
         userController.createUser(userTwo);
-        Collection<User> userOneFriends = new HashSet<>();
-        Collection<User> userTwoFriends = new HashSet<>();
-        userOneFriends.add(userTwo);
-        userTwoFriends.add(userOne);
 
 
         userController.addInFriend(1,2);
 
-        assertEquals(userOneFriends, userController.userService.getFriends(2));
-        assertEquals(userTwoFriends, userController.userService.getFriends(1));
+        assertTrue(userController.getAllFriends(2).contains(userOne));
+        assertTrue(userController.getAllFriends(1).contains(userTwo));
 
     }
 }

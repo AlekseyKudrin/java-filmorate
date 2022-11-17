@@ -33,18 +33,8 @@ public class InMemoryUserStorage implements UserStorage {
         if (!userList.containsValue(user)) {
             userList.put(user.getId(), user);
         } else {
-            throw new ValidationException("Найден дубль в БД");
+            throw new ValidationException("duplicate found in database");
         }
-    }
-
-    @Override
-    public void delete() {
-
-    }
-
-    @Override
-    public void search() {
-
     }
 
     @Override
@@ -56,7 +46,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void validateId (int id) {
         if (!userList.containsKey(id)) {
-            throw new ValidationException("Пользователь не найден");
+            throw new ValidationException("User not found");
         }
     }
 }

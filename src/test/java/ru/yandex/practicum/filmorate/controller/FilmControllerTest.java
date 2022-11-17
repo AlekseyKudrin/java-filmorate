@@ -9,8 +9,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,8 +61,6 @@ class FilmControllerTest {
 
 
         filmController.createFilm(filmAllData);
-        Map<Integer, Film> collection = new HashMap<>();
-        collection.put(1, filmAllData);
 
         IncorrectValueException thrownExceptionLength = assertThrows(IncorrectValueException.class,
                 () -> filmController.createFilm(filmLength));
@@ -78,12 +74,12 @@ class FilmControllerTest {
                 () -> filmController.createFilm(filmIncorrectDuration));
 
 
-        assertEquals(collection.values(), filmController.filmService.getFilmList());
-        assertTrue(thrownExceptionLength.getMessage().contains("Длинна описания не может привышать 200 символов"));
-        assertTrue(thrownExceptionNameNull.getMessage().contains("Название не может быть пустым"));
-        assertTrue(thrownExceptionNameEmpty.getMessage().contains("Название не может быть пустым"));
-        assertTrue(thrownExceptionNReleaseDate.getMessage().contains("Некорректная дата релиза"));
-        assertTrue(thrownExceptionIncorrectDuration.getMessage().contains("продолжительность не может быть меньше 0"));
+        assertEquals(filmAllData, filmController.getFilm(1));
+        assertTrue(thrownExceptionLength.getMessage().contains("Length description max=200 characters"));
+        assertTrue(thrownExceptionNameNull.getMessage().contains("Name film is can't be empty"));
+        assertTrue(thrownExceptionNameEmpty.getMessage().contains("Name film is can't be empty"));
+        assertTrue(thrownExceptionNReleaseDate.getMessage().contains("Date release can't be before 1895-12-28"));
+        assertTrue(thrownExceptionIncorrectDuration.getMessage().contains("Duration can't be negative"));
     }
 
     @Test
@@ -115,8 +111,8 @@ class FilmControllerTest {
                 () -> filmController.changeFilm(filmIncorrectId));
 
 
-        assertEquals(filmCorrectId, filmController.filmService.getFilmList());
-        assertTrue(thrownExceptionIncorrectId.getMessage().contains("Фильм не найден"));
+        assertEquals(filmCorrectId, filmController.getFilm(1));
+        assertTrue(thrownExceptionIncorrectId.getMessage().contains("Film not found"));
 
 
     }
