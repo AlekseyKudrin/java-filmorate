@@ -2,10 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ErrorResponse;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -23,53 +20,47 @@ public class FilmController {
     }
 
 
-
     @PostMapping
     public Film createFilm(@RequestBody Film film) {
+        log.info("Creating Film");
         filmService.create(film);
-        log.info("Фильм создан успешно");
         return film;
     }
 
     @PutMapping
-    public Film changeFilm(@RequestBody Film film){
+    public Film changeFilm(@RequestBody Film film) {
+        log.info("Film change");
         filmService.change(film);
-        log.info("Фильм успешно изменен");
         return film;
     }
 
     @PutMapping("{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
-        log.info("Ставим лайк фильму");
+        log.info("Like add to the film");
         filmService.addLike(id, userId);
     }
 
     @GetMapping
     public Collection<Film> getFilmList() {
-        log.info("Возврат списка фильмов");
+        log.info("Return film list");
         return filmService.getFilmList();
     }
 
     @GetMapping("{id}")
     public Film getFilm(@PathVariable int id) {
+        log.info("Return film by Id");
         return filmService.getFilm(id);
     }
 
     @GetMapping("popular")
     public Collection<Film> getPopFilms(@RequestParam(defaultValue = "10") Integer count) {
-        log.info("Возвтрат списка популярных фильмов");
-        return filmService.returnPop(count);
+        log.info("Return list popular films");
+        return filmService.returnPopFilms(count);
     }
 
     @DeleteMapping("{id}/like/{userId}")
     public void deleteLike(@PathVariable int id, @PathVariable int userId) {
-        log.info("Удаление лайка");
+        log.info("Deleting like");
         filmService.deleteLike(id, userId);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse hande(final ValidationException e) {
-        return new ErrorResponse(e.getMessage());
     }
 }

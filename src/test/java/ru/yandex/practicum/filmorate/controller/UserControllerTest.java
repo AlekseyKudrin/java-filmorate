@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -78,7 +79,7 @@ class UserControllerTest {
                 () -> userController.createUser(userBirthdayAfterDateNow));
 
 
-        assertEquals(user, userController.userService.userStorage.getUserList().get(1));
+        assertEquals(user, userController.userService.getUsersList());
         assertTrue(thrownExceptionEmailEmpty.getMessage().contains("Некорректно указан email"),
                 "Тест, пустым email");
         assertTrue(thrownExceptionIncorrectEmail.getMessage().contains("Некорректно указан email"),
@@ -87,7 +88,7 @@ class UserControllerTest {
                 "Тест, логин пустой");
         assertTrue(thrownExceptionIncorrectLogin.getMessage().contains("Некорректно указан login"),
                 "Тест, логин содержит пробел");
-        assertEquals(userNameEmpty, userController.userService.userStorage.getUserList().get(2));
+        assertEquals(userNameEmpty, userController.userService.getUsersList());
         assertTrue(thrownExceptionBirthday.getMessage().contains("Некорректно указана дата рождения"));
     }
 
@@ -120,7 +121,7 @@ class UserControllerTest {
                 () -> userController.changeUser(userIncorrectId));
 
 
-        assertEquals(userCorrectId, userController.userService.userStorage.getUserList().get(1));
+        assertEquals(userCorrectId, userController.userService.getUsersList());
         assertTrue(thrownExceptionIncorrectId.getMessage().contains("Пользователь не найден"));
     }
 
@@ -169,16 +170,16 @@ class UserControllerTest {
 
         userController.createUser(userOne);
         userController.createUser(userTwo);
-        Set<Integer> userOneFriends = new HashSet<>();
-        Set<Integer> userTwoFriends = new HashSet<>();
-        userOneFriends.add(userTwo.getId());
-        userTwoFriends.add(userOne.getId());
+        Collection<User> userOneFriends = new HashSet<>();
+        Collection<User> userTwoFriends = new HashSet<>();
+        userOneFriends.add(userTwo);
+        userTwoFriends.add(userOne);
 
 
         userController.addInFriend(1,2);
 
-        assertEquals(userOneFriends, userController.userService.userStorage.getUserList().get(1).getFriends());
-        assertEquals(userTwoFriends, userController.userService.userStorage.getUserList().get(2).getFriends());
+        assertEquals(userOneFriends, userController.userService.getFriends(2));
+        assertEquals(userTwoFriends, userController.userService.getFriends(1));
 
     }
 }

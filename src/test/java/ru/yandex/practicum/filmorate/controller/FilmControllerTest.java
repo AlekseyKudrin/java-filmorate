@@ -2,13 +2,15 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.exception.IncorrectValueException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,19 +63,22 @@ class FilmControllerTest {
 
 
         filmController.createFilm(filmAllData);
-        ResponseStatusException thrownExceptionLength = assertThrows(ResponseStatusException.class,
+        Map<Integer, Film> collection = new HashMap<>();
+        collection.put(1, filmAllData);
+
+        IncorrectValueException thrownExceptionLength = assertThrows(IncorrectValueException.class,
                 () -> filmController.createFilm(filmLength));
-        ResponseStatusException thrownExceptionNameNull = assertThrows(ResponseStatusException.class,
+        IncorrectValueException thrownExceptionNameNull = assertThrows(IncorrectValueException.class,
                 () -> filmController.createFilm(filmNotName));
-        ResponseStatusException thrownExceptionNameEmpty = assertThrows(ResponseStatusException.class,
+        IncorrectValueException thrownExceptionNameEmpty = assertThrows(IncorrectValueException.class,
                 () -> filmController.createFilm(filmNameEmpty));
-        ResponseStatusException thrownExceptionNReleaseDate = assertThrows(ResponseStatusException.class,
+        IncorrectValueException thrownExceptionNReleaseDate = assertThrows(IncorrectValueException.class,
                 () -> filmController.createFilm(filmIncorrectReleaseDate));
-        ResponseStatusException thrownExceptionIncorrectDuration = assertThrows(ResponseStatusException.class,
+        IncorrectValueException thrownExceptionIncorrectDuration = assertThrows(IncorrectValueException.class,
                 () -> filmController.createFilm(filmIncorrectDuration));
 
 
-        assertEquals(filmAllData, filmController.filmService.filmStorage.getFilmList().get(1));
+        assertEquals(collection.values(), filmController.filmService.getFilmList());
         assertTrue(thrownExceptionLength.getMessage().contains("Длинна описания не может привышать 200 символов"));
         assertTrue(thrownExceptionNameNull.getMessage().contains("Название не может быть пустым"));
         assertTrue(thrownExceptionNameEmpty.getMessage().contains("Название не может быть пустым"));
@@ -110,7 +115,7 @@ class FilmControllerTest {
                 () -> filmController.changeFilm(filmIncorrectId));
 
 
-        assertEquals(filmCorrectId, filmController.filmService.filmStorage.getFilmList().get(1));
+        assertEquals(filmCorrectId, filmController.filmService.getFilmList());
         assertTrue(thrownExceptionIncorrectId.getMessage().contains("Фильм не найден"));
 
 

@@ -2,9 +2,8 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.exception.IncorrectValueException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -14,7 +13,7 @@ import java.util.*;
 @Slf4j
 @Service
 public class UserService {
-    public UserStorage userStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public UserService(UserStorage userStorage) {
@@ -94,18 +93,18 @@ public class UserService {
     private void validateOfUser(User user) {
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
             log.trace("Некорректно указан email");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Некорректно указан email");
+            throw new IncorrectValueException("Некорректно указан email");
         }
         if (user.getLogin() == null || user.getLogin().contains(" ")) {
             log.trace("Некорректно указан login");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Некорректно указан login");
+            throw new IncorrectValueException("Некорректно указан login");
         }
         if (user.getName() == null || user.getName().length() == 0) {
             user.setName(user.getLogin());
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
             log.trace("Некорректно указана дата рождения");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Некорректно указана дата рождения");
+            throw new IncorrectValueException("Некорректно указана дата рождения");
         }
     }
 }
