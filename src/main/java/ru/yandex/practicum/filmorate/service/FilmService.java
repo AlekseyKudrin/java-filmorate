@@ -49,7 +49,7 @@ public class FilmService {
 
     public Film getFilm(int id) {
         Film film = filmStorage.getFilmById(id);
-        log.info("Return successfully film by Id");
+        log.info("Return film by Id successfully");
         return film;
     }
 

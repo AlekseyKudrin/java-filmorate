@@ -22,50 +22,50 @@ public class UserController {
     @PostMapping
     public User createUser(@RequestBody User user) {
         userService.create(user);
-        log.info("Пользователь создан успешно");
+        log.info("Creating user");
         return user;
     }
 
     @PutMapping
     public User changeUser(@RequestBody User user) {
         userService.change(user);
-        log.info("Позьзователь успешно изменен");
+        log.info("User change");
         return user;
     }
 
     @PutMapping("{id}/friends/{friendId}")
     public void addInFriend(@PathVariable int id, @PathVariable int friendId) {
-        log.info("Друг добавлен");
+        log.info("Adding a friend");
         userService.addInFriend(id, friendId);
     }
 
     @GetMapping
     public Collection<User> getUserList() {
-        log.info("Возврат списка пользователей");
+        log.info("Return user list");
         return userService.getUsersList();
     }
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable int id) {
-        log.info("Данные о пользователе переданы");
+        log.info("Return user by Id");
         return userService.getUser(id);
     }
 
     @GetMapping("{id}/friends")
     public Collection<User> getAllFriends(@PathVariable int id) {
-        log.info("Список друзей возвращен");
+        log.info("Return list friends");
         return userService.getFriends(id);
     }
 
     @GetMapping("{id}/friends/common/{otherId}")
     public Collection<User> getGeneralFriends(@PathVariable int id, @PathVariable int otherId) {
-        log.info("Список общих друзей возвращен");
+        log.info("Return general list friends");
         return userService.getFriends(id, otherId);
     }
 
     @DeleteMapping("{id}/friends/{friendId}")
     public void deleteInFriend (@PathVariable int id, @PathVariable int friendId) {
-        log.info("Друг удален");
+        log.info("Deleting friend");
         userService.deleteInFriend(id, friendId);
     }
 }
