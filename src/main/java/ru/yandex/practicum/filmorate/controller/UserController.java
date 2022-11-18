@@ -1,68 +1,71 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private int id = 1;
-    public final Map<Integer, User> userList = new HashMap<>();
+
+    UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
     public User createUser(@RequestBody User user) {
-        validateCreate(user);
-        log.info("Пользователь создан успешно");
+        userService.create(user);
+        log.info("Creating user");
         return user;
     }
 
     @PutMapping
     public User changeUser(@RequestBody User user) {
-        validateChange(user);
-        log.info("Позьзователь успешно изменен");
+        userService.change(user);
+        log.info("User change");
         return user;
+    }
+
+    @PutMapping("{id}/friends/{friendId}")
+    public void addInFriend(@PathVariable int id, @PathVariable int friendId) {
+        log.info("Adding a friend");
+        userService.addInFriend(id, friendId);
     }
 
     @GetMapping
     public Collection<User> getUserList() {
-        log.info("Возврат списка пользователей");
-        return userList.values();
+        log.info("Return user list");
+        return userService.getUsersList();
     }
 
-    void validateCreate(User user) {
-        if (user.getEmail() == null || !user.getEmail().contains("@")) {
-            log.trace ("Некорректно указан email");
-            throw new ValidationException("Некорректно указан email");
-        }
-        if (user.getLogin() == null || user.getLogin().contains(" ")) {
-            log.trace ("Некорректно указан login");
-            throw new ValidationException("Некорректно указан login");
-        }
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.trace("Некорректно указана дата рождения");
-            throw new ValidationException("Некорректно указана дата рождения");
-        }
-        user.setId(id);
-        userList.put(user.getId(), user);
-        id++;
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable int id) {
+        log.info("Return user by Id");
+        return userService.getUser(id);
     }
 
-    void validateChange(User user) {
-        if (userList.containsKey(user.getId())) {
-            userList.put(user.getId(), user);
-        } else {
-            log.trace("Пользователь не изменен");
-            throw new ValidationException("Пользователь не изменен");
-        }
+    @GetMapping("{id}/friends")
+    public Collection<User> getAllFriends(@PathVariable int id) {
+        log.info("Return list friends");
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("{id}/friends/common/{otherId}")
+    public Collection<User> getGeneralFriends(@PathVariable int id, @PathVariable int otherId) {
+        log.info("Return general list friends");
+        return userService.getFriends(id, otherId);
+    }
+
+    @DeleteMapping("{id}/friends/{friendId}")
+    public void deleteInFriend (@PathVariable int id, @PathVariable int friendId) {
+        log.info("Deleting friend");
+        userService.deleteInFriend(id, friendId);
     }
 }

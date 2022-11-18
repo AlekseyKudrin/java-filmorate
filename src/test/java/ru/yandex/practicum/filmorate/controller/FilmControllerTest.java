@@ -2,8 +2,11 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exception.IncorrectValueException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 
@@ -14,7 +17,7 @@ class FilmControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        filmController = new FilmController();
+        filmController = new FilmController(new FilmService(new InMemoryFilmStorage()));
     }
 
     @Test
@@ -58,30 +61,30 @@ class FilmControllerTest {
 
 
         filmController.createFilm(filmAllData);
-        ValidationException thrownExceptionLength = assertThrows(ValidationException.class,
+
+        IncorrectValueException thrownExceptionLength = assertThrows(IncorrectValueException.class,
                 () -> filmController.createFilm(filmLength));
-        ValidationException thrownExceptionNameNull = assertThrows(ValidationException.class,
+        IncorrectValueException thrownExceptionNameNull = assertThrows(IncorrectValueException.class,
                 () -> filmController.createFilm(filmNotName));
-        ValidationException thrownExceptionNameEmpty = assertThrows(ValidationException.class,
+        IncorrectValueException thrownExceptionNameEmpty = assertThrows(IncorrectValueException.class,
                 () -> filmController.createFilm(filmNameEmpty));
-        ValidationException thrownExceptionNReleaseDate = assertThrows(ValidationException.class,
+        IncorrectValueException thrownExceptionNReleaseDate = assertThrows(IncorrectValueException.class,
                 () -> filmController.createFilm(filmIncorrectReleaseDate));
-        ValidationException thrownExceptionIncorrectDuration = assertThrows(ValidationException.class,
+        IncorrectValueException thrownExceptionIncorrectDuration = assertThrows(IncorrectValueException.class,
                 () -> filmController.createFilm(filmIncorrectDuration));
 
 
-        assertEquals(filmAllData, filmController.filmList.get(1));
-        assertTrue(thrownExceptionLength.getMessage().contains("Длинна описания не может привышать 200 символов"));
-        assertTrue(thrownExceptionNameNull.getMessage().contains("Название не может быть пустым"));
-        assertTrue(thrownExceptionNameEmpty.getMessage().contains("Название не может быть пустым"));
-        assertTrue(thrownExceptionNReleaseDate.getMessage().contains("Некорректная дата релиза"));
-        assertTrue(thrownExceptionIncorrectDuration.getMessage().contains("продолжительность не может быть меньше 0"));
+        assertEquals(filmAllData, filmController.getFilm(1));
+        assertTrue(thrownExceptionLength.getMessage().contains("Length description max=200 characters"));
+        assertTrue(thrownExceptionNameNull.getMessage().contains("Name film is can't be empty"));
+        assertTrue(thrownExceptionNameEmpty.getMessage().contains("Name film is can't be empty"));
+        assertTrue(thrownExceptionNReleaseDate.getMessage().contains("Date release can't be before 1895-12-28"));
+        assertTrue(thrownExceptionIncorrectDuration.getMessage().contains("Duration can't be negative"));
     }
 
     @Test
     void changeFilm() {
         Film film = new Film();
-        film.setId(1);
         film.setName("Test");
         film.setDescription("Test Film");
         film.setReleaseDate(LocalDate.of(1991,10,10));
@@ -102,14 +105,14 @@ class FilmControllerTest {
         filmIncorrectId.setDuration(60);
 
 
-        filmController.filmList.put(1, film);
+        filmController.createFilm(film);
         filmController.changeFilm(filmCorrectId);
         ValidationException thrownExceptionIncorrectId = assertThrows(ValidationException.class,
                 () -> filmController.changeFilm(filmIncorrectId));
 
 
-        assertEquals(filmCorrectId, filmController.filmList.get(1));
-        assertTrue(thrownExceptionIncorrectId.getMessage().contains("Изменения не внесены, данного фильма нет в базе"));
+        assertEquals(filmCorrectId, filmController.getFilm(1));
+        assertTrue(thrownExceptionIncorrectId.getMessage().contains("Film not found"));
 
 
     }
@@ -117,30 +120,27 @@ class FilmControllerTest {
     @Test
     void getFilmList() {
         Film film1 = new Film();
-        film1.setId(1);
         film1.setName("Test");
         film1.setDescription("Test Film");
         film1.setReleaseDate(LocalDate.of(1991,10,10));
         film1.setDuration(60);
 
         Film film2= new Film();
-        film2.setId(2);
         film2.setName("Test");
         film2.setDescription("Test Film");
         film2.setReleaseDate(LocalDate.of(1991,10,12));
         film2.setDuration(60);
 
         Film film3 = new Film();
-        film3.setId(3);
         film3.setName("Test");
         film3.setDescription("Test Film");
         film3.setReleaseDate(LocalDate.of(1991,10,10));
         film3.setDuration(60);
 
 
-        filmController.filmList.put(1, film1);
-        filmController.filmList.put(2, film2);
-        filmController.filmList.put(3, film3);
+        filmController.createFilm(film1);
+        filmController.createFilm(film2);
+        filmController.createFilm(film3);
 
 
         assertEquals(3, filmController.getFilmList().size());
