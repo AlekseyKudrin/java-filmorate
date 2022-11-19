@@ -21,15 +21,15 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody User user) {
-        userService.create(user);
         log.info("Creating user");
+        userService.create(user);
         return user;
     }
 
     @PutMapping
     public User changeUser(@RequestBody User user) {
-        userService.change(user);
         log.info("User change");
+        userService.change(user);
         return user;
     }
 
