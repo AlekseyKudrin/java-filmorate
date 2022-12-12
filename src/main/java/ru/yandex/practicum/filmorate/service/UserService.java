@@ -48,32 +48,32 @@ public class UserService {
     }
 
     public void addInFriend(int id, int friendId) {
-        User user = userStorage.getUserById(id);
-        User friend = userStorage.getUserById(friendId);
-        user.addFriend(friend.getId());
-        friend.addFriend(user.getId());
-        log.info("Friend add successfully");
+//        User user = userStorage.getUserById(id);
+//        User friend = userStorage.getUserById(friendId);
+//        user.addFriend(friend.getId());
+//        friend.addFriend(user.getId());
+//        log.info("Friend add successfully");
     }
 
     public void deleteInFriend(int id, int friendId) {
-        User user = userStorage.getUserById(id);
-        User friend = userStorage.getUserById(friendId);
-        user.deleteFriend(friend.getId());
-        friend.deleteFriend(user.getId());
-        log.info("Friend delete successfully");
+//        User user = userStorage.getUserById(id);
+//        User friend = userStorage.getUserById(friendId);
+//        user.deleteFriend(friend.getId());
+//        friend.deleteFriend(user.getId());
+//        log.info("Friend delete successfully");
     }
 
     public Collection<User> getFriends(int id) {
         List <User> listFriends = new ArrayList<>();
-        Set<Integer> listIdFriends = userStorage.getUserById(id).getFriends();
-        for (Integer user : listIdFriends) {
-            for (Integer userId : userStorage.getUserList().keySet()) {
-                if (user.equals(userId)) {
-                    listFriends.add(userStorage.getUserList().get(userId));
-                }
-            }
-        }
-        log.info("Return list friends successfully");
+//        Set<Integer> listIdFriends = userStorage.getUserById(id).getFriends();
+//        for (Integer user : listIdFriends) {
+//            for (Integer userId : userStorage.getUserList().keySet()) {
+//                if (user.equals(userId)) {
+//                    listFriends.add(userStorage.getUserList().get(userId));
+//                }
+//            }
+//        }
+//        log.info("Return list friends successfully");
         return listFriends;
     }
 
@@ -83,22 +83,22 @@ public class UserService {
 
         List<Integer> generalFriends = new ArrayList<>();
         List<User> userList = new ArrayList<>();
-
-        for(Integer userId : user.getFriends()){
-            for(Integer otherUserId : otherUser.getFriends()){
-                if(userId.equals(otherUserId)) {
-                    generalFriends.add(userId);
-                }
-            }
-        }
-        for (Integer generalId : generalFriends) {
-            for (Integer userId : userStorage.getUserList().keySet()) {
-                if (generalId.equals(userId)) {
-                    userList.add(userStorage.getUserList().get(userId));
-                }
-            }
-        }
-        log.info("Return general list friends successfully");
+//
+//        for(Integer userId : user.getFriends()){
+//            for(Integer otherUserId : otherUser.getFriends()){
+//                if(userId.equals(otherUserId)) {
+//                    generalFriends.add(userId);
+//                }
+//            }
+//        }
+//        for (Integer generalId : generalFriends) {
+//            for (Integer userId : userStorage.getUserList().keySet()) {
+//                if (generalId.equals(userId)) {
+//                    userList.add(userStorage.getUserList().get(userId));
+//                }
+//            }
+//        }
+//        log.info("Return general list friends successfully");
         return userList;
     }
 

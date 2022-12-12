@@ -1,28 +1,21 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.experimental.FieldDefaults;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
-@Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Getter
+@Setter
+@AllArgsConstructor
+//@Builder
+//@FieldDefaults(level = AccessLevel.PUBLIC)
 public class User {
-    int id;
-    String email;
-    String login;
-    String name;
-    LocalDate birthday;
-    Set<Integer> friends = new HashSet<>();
-
-    public void addFriend(int id) {
-        friends.add(id);
-    }
-
-    public void deleteFriend(int id) {
-        friends.remove(id);
-    }
+    public int id;
+    public String email;
+    public String login;
+    public String name;
+    public LocalDate birthday;
 }

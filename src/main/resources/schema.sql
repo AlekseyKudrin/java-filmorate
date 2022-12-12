@@ -1,13 +1,16 @@
 create table FILMS
 (
-    ID           INTEGER not null,
+    ID           INTEGER auto_increment
+        unique,
     NAME         CHARACTER VARYING(100),
     DESCRIPTION  CHARACTER VARYING(200),
     RELEASE_DATE DATE,
     DURATION     INTEGER,
     RATE         INTEGER,
     constraint "FILM_pk"
-        primary key (ID)
+        primary key (ID),
+    constraint FILMS_MPA_ID_FK
+        foreign key (RATE) references MPA
 );
 
 create table USERS
@@ -69,5 +72,15 @@ create table FRIENDS
     constraint "FRIENDS_USER_fRIEND_null_fk"
         foreign key (ID_FRIEND) references USERS
 );
+
+create table MPA
+(
+    ID     INTEGER not null,
+    RATING INTEGER,
+    constraint "MPA_pk"
+        primary key (ID)
+);
+
+
 
 
