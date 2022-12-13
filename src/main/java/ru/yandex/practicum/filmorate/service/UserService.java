@@ -8,10 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -23,82 +20,50 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public void create(User user) {
+    public Optional<User> create(User user) {
         validateOfUser(user);
-        userStorage.add(user);
+        userStorage.create(user);
         log.info("User successfully created");
+        return userStorage.getUser(user);
     }
 
-    public void change(User user) {
+    public Optional<User> change(User user) {
         validateOfUser(user);
         userStorage.change(user);
         log.info("User successfully change");
+        return userStorage.getUser(user);
     }
 
     public Collection<User> getUsersList() {
-        Collection<User> collectionUser = userStorage.getUserList().values();
+        Collection<User> collectionUser = userStorage.getUserList();
         log.info("Return user list successfully");
         return collectionUser;
     }
 
-    public User getUser(int id) {
-        User user = userStorage.getUserById(id);
+    public Optional<User> getUser(int id) {
+        Optional<User> user= userStorage.getUserById(id);
         log.info("Return user by Id successfully");
         return user;
     }
 
     public void addInFriend(int id, int friendId) {
-//        User user = userStorage.getUserById(id);
-//        User friend = userStorage.getUserById(friendId);
-//        user.addFriend(friend.getId());
-//        friend.addFriend(user.getId());
-//        log.info("Friend add successfully");
+        userStorage.addInFriend(id, friendId);
     }
 
-    public void deleteInFriend(int id, int friendId) {
-//        User user = userStorage.getUserById(id);
-//        User friend = userStorage.getUserById(friendId);
-//        user.deleteFriend(friend.getId());
-//        friend.deleteFriend(user.getId());
-//        log.info("Friend delete successfully");
+    public void deleteFriend(int id, int friendId) {
+        userStorage.deleteFriend(id, friendId);
+        log.info("Friend delete successfully");
     }
 
     public Collection<User> getFriends(int id) {
-        List <User> listFriends = new ArrayList<>();
-//        Set<Integer> listIdFriends = userStorage.getUserById(id).getFriends();
-//        for (Integer user : listIdFriends) {
-//            for (Integer userId : userStorage.getUserList().keySet()) {
-//                if (user.equals(userId)) {
-//                    listFriends.add(userStorage.getUserList().get(userId));
-//                }
-//            }
-//        }
-//        log.info("Return list friends successfully");
-        return listFriends;
+        Collection<User> friendsList = userStorage.getAllFriends(id);
+        log.info("Return list friends successfully");
+        return friendsList;
     }
 
     public Collection<User> getFriends(int id, int otherId) {
-        User user = userStorage.getUserById(id);
-        User otherUser = userStorage.getUserById(otherId);
-
-        List<Integer> generalFriends = new ArrayList<>();
-        List<User> userList = new ArrayList<>();
-//
-//        for(Integer userId : user.getFriends()){
-//            for(Integer otherUserId : otherUser.getFriends()){
-//                if(userId.equals(otherUserId)) {
-//                    generalFriends.add(userId);
-//                }
-//            }
-//        }
-//        for (Integer generalId : generalFriends) {
-//            for (Integer userId : userStorage.getUserList().keySet()) {
-//                if (generalId.equals(userId)) {
-//                    userList.add(userStorage.getUserList().get(userId));
-//                }
-//            }
-//        }
-//        log.info("Return general list friends successfully");
+        Collection<User> userList = userStorage.getGeneralFriends(id, otherId);
+        log.info("Return general list friends successfully");
         return userList;
     }
 

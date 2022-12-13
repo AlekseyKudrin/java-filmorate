@@ -7,6 +7,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
+import java.util.Optional;
+
 @Slf4j
 @RestController
 @RequestMapping("/users")
@@ -20,17 +22,15 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public Optional<User> createUser(@RequestBody User user) {
         log.info("Creating user");
-        userService.create(user);
-        return user;
+        return userService.create(user);
     }
 
     @PutMapping
-    public User changeUser(@RequestBody User user) {
+    public Optional<User> changeUser(@RequestBody User user) {
         log.info("User change");
-        userService.change(user);
-        return user;
+        return userService.change(user);
     }
 
     @PutMapping("{id}/friends/{friendId}")
@@ -46,7 +46,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable int id) {
+    public Optional<User> getUser(@PathVariable int id) {
         log.info("Return user by Id");
         return userService.getUser(id);
     }
@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @GetMapping("{id}/friends/common/{otherId}")
-    public Collection<User> getGeneralFriends(@PathVariable int id, @PathVariable int otherId) {
+    public Collection<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
         log.info("Return general list friends");
         return userService.getFriends(id, otherId);
     }
@@ -66,6 +66,6 @@ public class UserController {
     @DeleteMapping("{id}/friends/{friendId}")
     public void deleteInFriend (@PathVariable int id, @PathVariable int friendId) {
         log.info("Deleting friend");
-        userService.deleteInFriend(id, friendId);
+        userService.deleteFriend(id, friendId);
     }
 }

@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.dao.impl;
 
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -11,7 +10,11 @@ import ru.yandex.practicum.filmorate.storage.dao.UsersDao;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class UserDaoImpl implements UsersDao {
@@ -36,14 +39,18 @@ public class UserDaoImpl implements UsersDao {
 
     @Override
     public void change(User user) {
-        getUserById(user.getId());
-
-
+        String sqlQuery = "UPDATE PUBLIC.USERS SET EMAIL = ?, LOGIN = ?, NAME = ?, BIRTHDAY = ? WHERE ID = ?";
+        jdbcTemplate.update(sqlQuery,
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                Date.valueOf(user.getBirthday()),
+                user.getId());
     }
 
     @Override
-    public Map<Integer, User> getUserList() {
-        return null;
+    public Collection<User> getUserList() {
+        return jdbcTemplate.query("SELECT * FROM PUBLIC.USERS", this::mapRowToUsers);
     }
 
     @Override
@@ -52,27 +59,55 @@ public class UserDaoImpl implements UsersDao {
     }
 
     @Override
-    public User getUserById(int id) {
-        String sqlQuery = "select * from PUBLIC.USERS where ID = "+ id;
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQuery);
-        User user = new User(
-                userRows.getInt("ID"),
-                userRows.getString("EMAIL"),
-                userRows.getString("LOGIN"),
-                userRows.getString("NAME"),
-                userRows.getDate("BIRTHDAY").toLocalDate()
-        );
-
-        return user;
-//                jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
+    public Optional<User> getUserById(int id) {
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from PUBLIC.USERS where ID = ?", id);
+        if (userRows.next()) {
+            User user = new User(
+                    userRows.getInt("ID"),
+                    userRows.getString("EMAIL"),
+                    userRows.getString("LOGIN"),
+                    userRows.getString("NAME"),
+                    userRows.getDate("BIRTHDAY").toLocalDate()
+            );
+            return Optional.of(user);
+        } else {
+            return Optional.empty();
+        }
     }
 
-/*    private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
-        return User.builder()
-                .id(resultSet.getInt("id"))
-                .email(resultSet.getString("email"))
-                .name(resultSet.getString("name"))
-                .birthday(resultSet.getDate("birthday").toLocalDate())
-                .build();
-    }*/
+    @Override
+    public Collection<User> getUserById(Collection<Integer> friends) {
+        List<User> friendsList = new ArrayList<>();
+        for (int id : friends) {
+            friendsList.add(getUserById(id).get());
+        }
+        return friendsList;
+    }
+
+    @Override
+    public Optional<User> getUserAllFields(User user) {
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from PUBLIC.USERS where EMAIL = ? and LOGIN =?" +
+                "and NAME = ? and BIRTHDAY = ?", user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+        if (userRows.next()) {
+            User userFromDb = new User(
+                    userRows.getInt("ID"),
+                    userRows.getString("EMAIL"),
+                    userRows.getString("LOGIN"),
+                    userRows.getString("NAME"),
+                    userRows.getDate("BIRTHDAY").toLocalDate()
+            );
+            return Optional.of(userFromDb);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private User mapRowToUsers(ResultSet resultSet, int rowNum) throws SQLException {
+        int id = resultSet.getInt("id");
+        String email = resultSet.getString("email");
+        String login = resultSet.getString("login");
+        String name = resultSet.getString("name");
+        LocalDate birthday = resultSet.getDate("birthday").toLocalDate();
+        return new User(id, email, login, name, birthday);
+    }
 }

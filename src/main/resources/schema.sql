@@ -1,3 +1,12 @@
+create table MPA
+(
+    ID     INTEGER auto_increment
+        unique,
+    RATING CHARACTER VARYING(10),
+    constraint "MPA_pk"
+        primary key (ID)
+);
+
 create table FILMS
 (
     ID           INTEGER auto_increment
@@ -15,7 +24,8 @@ create table FILMS
 
 create table USERS
 (
-    ID       INTEGER not null,
+    ID       INTEGER auto_increment
+        unique,
     EMAIL    CHARACTER VARYING(100),
     LOGIN    CHARACTER VARYING(100),
     NAME     CHARACTER VARYING(100),
@@ -24,40 +34,31 @@ create table USERS
         primary key (ID)
 );
 
-create table FILM_LIKE
-(
-    FILM_ID INT not null,
-    USER_ID INT,
-    constraint "FILM_LIKE_FILM_null_fk"
-        foreign key (FILM_ID) references FILMS (ID),
-    constraint "FILM_LIKE_USERS_null_fk"
-        foreign key (USER_ID) references USERS (ID)
-);
-
 create table GENRE
 (
-    ID         INT               not null,
-    GENRE_NAME CHARACTER VARYING(255) not null,
-    constraint "GENRE_pk"
-        primary key (GENRE_NAME)
-);
-
-create table FILM_GENRE
-(
-    FILM_ID  INTEGER,
-    GENRE_ID INTEGER,
-    constraint "FILM_GENRE_FILM_null_fk"
-        foreign key (FILM_ID) references FILMS,
-    constraint "FILM_GENRE_GENRE_null_fk"
-        foreign key (GENRE_ID) references GENRE
+    ID         INTEGER auto_increment
+        primary key
+        unique,
+    GENRE_NAME CHARACTER VARYING(255) not null
 );
 
 create table STATUS
 (
-    ID     INTEGER not null,
-    STATUS CHARACTER VARYING(10),
+    ID     INTEGER auto_increment
+        unique,
+    STATUS CHARACTER VARYING(20),
     constraint "STATUS_pk"
         primary key (ID)
+);
+
+create table FILM_GENRE
+(
+    FILM_ID  INTEGER not null,
+    GENRE_ID INTEGER not null,
+    constraint FILM_GENRE_FILMS_ID_FK
+        foreign key (FILM_ID) references FILMS,
+    constraint FILM_GENRE_GENRE_ID_FK
+        foreign key (GENRE_ID) references GENRE
 );
 
 create table FRIENDS
@@ -73,14 +74,13 @@ create table FRIENDS
         foreign key (ID_FRIEND) references USERS
 );
 
-create table MPA
+create table FILM_LIKE
 (
-    ID     INTEGER not null,
-    RATING INTEGER,
-    constraint "MPA_pk"
-        primary key (ID)
+    FILM_ID INTEGER not null,
+    USER_ID INTEGER,
+    constraint "FILM_LIKE_FILM_null_fk"
+        foreign key (FILM_ID) references FILMS,
+    constraint "FILM_LIKE_USERS_null_fk"
+        foreign key (USER_ID) references USERS
 );
-
-
-
 
