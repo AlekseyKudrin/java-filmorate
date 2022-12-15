@@ -1,8 +1,7 @@
 create table MPA
 (
-    ID     INTEGER auto_increment
-        unique,
-    RATING CHARACTER VARYING(10),
+    ID     INTEGER auto_increment,
+    NAME CHARACTER VARYING(10),
     constraint "MPA_pk"
         primary key (ID)
 );
@@ -15,11 +14,11 @@ create table FILMS
     DESCRIPTION  CHARACTER VARYING(200),
     RELEASE_DATE DATE,
     DURATION     INTEGER,
-    RATE         INTEGER,
+    MPA          INTEGER,
     constraint "FILM_pk"
         primary key (ID),
     constraint FILMS_MPA_ID_FK
-        foreign key (RATE) references MPA
+        foreign key (MPA) references MPA
 );
 
 create table USERS
@@ -67,11 +66,11 @@ create table FRIENDS
     ID_FRIEND INTEGER,
     STATUS_ID INTEGER,
     constraint "FRIENDS_STATUS_null_fk"
-        foreign key (STATUS_ID) references STATUS,
+        foreign key (STATUS_ID) references STATUS (ID),
     constraint "FRIENDS_USERS_null_fk"
-        foreign key (ID_USER) references USERS,
+        foreign key (ID_USER) references USERS (ID),
     constraint "FRIENDS_USER_fRIEND_null_fk"
-        foreign key (ID_FRIEND) references USERS
+        foreign key (ID_FRIEND) references USERS (ID)
 );
 
 create table FILM_LIKE
@@ -81,6 +80,5 @@ create table FILM_LIKE
     constraint "FILM_LIKE_FILM_null_fk"
         foreign key (FILM_ID) references FILMS,
     constraint "FILM_LIKE_USERS_null_fk"
-        foreign key (USER_ID) references USERS
+        foreign key (USER_ID) references USERS (ID)
 );
-

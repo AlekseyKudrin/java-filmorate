@@ -16,8 +16,6 @@ public interface UsersDao {
 
     Collection<User> getUserList();
 
-    void validateId (int id);
-
     Optional<User> getUserById(int id);
 
     Collection<User> getUserById(Collection<Integer> friends);

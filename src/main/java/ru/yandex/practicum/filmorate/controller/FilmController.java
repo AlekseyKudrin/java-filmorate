@@ -4,9 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
+import java.util.Optional;
+
 @Slf4j
 @RestController
 @RequestMapping("/films")
@@ -21,17 +24,15 @@ public class FilmController {
 
 
     @PostMapping
-    public Film createFilm(@RequestBody Film film) {
-        log.info("Creating Film");
-        filmService.create(film);
-        return film;
+    public Optional<Film> createFilm(@RequestBody Film film) {
+        log.info("Creating film");
+        return filmService.create(film);
     }
 
     @PutMapping
-    public Film changeFilm(@RequestBody Film film) {
+    public Optional<Film> changeFilm(@RequestBody Film film) {
         log.info("Film change");
-        filmService.change(film);
-        return film;
+        return filmService.change(film);
     }
 
     @PutMapping("{id}/like/{userId}")

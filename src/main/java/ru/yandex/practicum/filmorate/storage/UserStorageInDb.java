@@ -22,8 +22,6 @@ public class UserStorageInDb implements UserStorage {
         this.friendsDao = friendsDao;
     }
 
-    private final Map<Integer, User> userList = new HashMap<>();
-
     @Override
     public Collection<User> getUserList() {
         return usersDao.getUserList();
@@ -33,7 +31,6 @@ public class UserStorageInDb implements UserStorage {
     public void create(User user) {
         usersDao.create(user);
     }
-
 
     @Override
     public void change(User user) {
@@ -53,8 +50,8 @@ public class UserStorageInDb implements UserStorage {
     }
 
     @Override
-    public Collection<User> getGeneralFriends(int id, int otherId) {
-        Collection<Integer> generalFriendsList = friendsDao.getGeneralFriends(id, otherId);
+    public Collection<User> getCommonFriends(int id, int otherId) {
+        Collection<Integer> generalFriendsList = friendsDao.getCommonFriends(id, otherId);
         return usersDao.getUserById(generalFriendsList);
     }
 

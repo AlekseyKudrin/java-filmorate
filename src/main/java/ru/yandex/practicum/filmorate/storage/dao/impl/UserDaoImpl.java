@@ -54,11 +54,6 @@ public class UserDaoImpl implements UsersDao {
     }
 
     @Override
-    public void validateId(int id) {
-
-    }
-
-    @Override
     public Optional<User> getUserById(int id) {
         SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from PUBLIC.USERS where ID = ?", id);
         if (userRows.next()) {

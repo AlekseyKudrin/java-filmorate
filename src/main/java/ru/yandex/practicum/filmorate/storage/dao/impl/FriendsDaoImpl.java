@@ -32,7 +32,7 @@ public class FriendsDaoImpl implements FriendsDao {
     }
 
     @Override
-    public Collection<Integer> getGeneralFriends(int id, int otherId) {
+    public Collection<Integer> getCommonFriends(int id, int otherId) {
         List<Integer> friendsList = new ArrayList<>();
         SqlRowSet commonFriendsRow = jdbcTemplate.queryForRowSet("SELECT U1.ID_USER, U1.ID_FRIEND AS COMMON_FRIENDS," +
                 "U2.ID_USER FROM FRIENDS AS U1 JOIN FRIENDS AS U2 ON U2.ID_FRIEND=U1.ID_FRIEND " +

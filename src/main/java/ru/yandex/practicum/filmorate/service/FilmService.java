@@ -1,16 +1,19 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.IncorrectValueException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,27 +26,29 @@ public class FilmService {
         this.filmStorage =  inMemoryFilmStorage;
     }
 
-    public void create(Film film){
+    public Optional<Film> create(Film film){
         validateOfFilm(film);
-        filmStorage.add(film);
+        filmStorage.create(film);
         log.info("Film successfully created");
+        return filmStorage.getFilm(film);
     }
 
-    public void change(Film film) {
+    public Optional<Film> change(Film film) {
         validateOfFilm(film);
         filmStorage.change(film);
         log.info("Film successfully change");
+        return filmStorage.getFilm(film);
         }
 
     public Collection<Film> getFilmList() {
-        Collection<Film> collectionFilms = filmStorage.getFilmList().values();
+        Collection<Film> collectionFilms = filmStorage.getFilmList();
         log.info("Return film list successfully");
         return collectionFilms;
     }
 
     public void addLike(int id, int userId) {
         Film film = filmStorage.getFilmById(id);
-        film.addLike(userId);
+//        film.addLike(userId);
         log.info("Like successfully add");
     }
 
@@ -56,7 +61,7 @@ public class FilmService {
     public void deleteLike(int id, int userId) {
         if (userId > 0) {
             Film film = filmStorage.getFilmById(id);
-            film.deleteLike(userId);
+//            film.deleteLike(userId);
             log.info("Like successfully deleting");
         } else {
             throw new ValidationException("Id user can't be negative");
@@ -64,12 +69,13 @@ public class FilmService {
     }
 
     public Collection<Film> returnPopFilms (int count) {
-        Collection<Film> collectionFilms =  filmStorage.getFilmList().values();
-        List<Film> listSortFilm = collectionFilms.stream().sorted((o1, o2) -> Integer.compare(o2.getLikes().size(), o1.getLikes().size()))
-                .limit(count)
-                .collect(Collectors.toList());
-        log.info("Return popular films successfully");
-        return listSortFilm;
+//        Collection<Film> collectionFilms =  filmStorage.getFilmList().values();
+//        List<Film> listSortFilm = collectionFilms.stream().sorted((o1, o2) -> Integer.compare(o2.getLikes().size(), o1.getLikes().size()))
+//                .limit(count)
+//                .collect(Collectors.toList());
+//        log.info("Return popular films successfully");
+//        return listSortFilm;
+        return null;
     }
 
     private void validateOfFilm (Film film) {

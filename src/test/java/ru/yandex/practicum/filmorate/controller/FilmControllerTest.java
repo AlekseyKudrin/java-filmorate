@@ -6,7 +6,7 @@ import ru.yandex.practicum.filmorate.exception.IncorrectValueException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorageInDb;
 
 import java.time.LocalDate;
 
@@ -17,7 +17,7 @@ class FilmControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        filmController = new FilmController(new FilmService(new InMemoryFilmStorage()));
+//        filmController = new FilmController(new FilmService(new FilmStorageInDb()));
     }
 
     @Test

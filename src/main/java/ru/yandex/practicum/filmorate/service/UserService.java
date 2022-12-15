@@ -62,7 +62,7 @@ public class UserService {
     }
 
     public Collection<User> getFriends(int id, int otherId) {
-        Collection<User> userList = userStorage.getGeneralFriends(id, otherId);
+        Collection<User> userList = userStorage.getCommonFriends(id, otherId);
         log.info("Return general list friends successfully");
         return userList;
     }
