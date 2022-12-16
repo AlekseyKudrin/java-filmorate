@@ -8,7 +8,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
 
 @Slf4j
 @Service

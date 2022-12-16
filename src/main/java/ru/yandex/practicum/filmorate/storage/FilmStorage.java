@@ -15,7 +15,11 @@ public interface FilmStorage {
 
     Collection<Film> getFilmList();
 
-    Film getFilmById(int id);
+    Optional<Film> getFilmById(int id);
+
+    Collection<Film> getPopFilms(int count);
 
     void validateId (int id);
+
+    void addLike(int id, int userId);
 }

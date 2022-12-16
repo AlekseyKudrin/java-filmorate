@@ -15,7 +15,5 @@ public interface FilmsDao {
 
     Optional<Film> getFilmById(int id);
 
-//    Collection<User> getFilmById(Collection<Integer> films);
-
     Optional<Film> getFilmAllFields(Film film);
 }

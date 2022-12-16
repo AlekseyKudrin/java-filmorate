@@ -14,6 +14,7 @@ create table FILMS
     DESCRIPTION  CHARACTER VARYING(200),
     RELEASE_DATE DATE,
     DURATION     INTEGER,
+    RATE         INTEGER,
     MPA          INTEGER,
     constraint "FILM_pk"
         primary key (ID),
@@ -38,7 +39,7 @@ create table GENRE
     ID         INTEGER auto_increment
         primary key
         unique,
-    GENRE_NAME CHARACTER VARYING(255) not null
+    NAME CHARACTER VARYING(255) not null
 );
 
 create table STATUS

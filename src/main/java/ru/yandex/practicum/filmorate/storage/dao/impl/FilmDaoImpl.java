@@ -5,7 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genres;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.dao.FilmsDao;
 
@@ -13,6 +13,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -28,80 +29,99 @@ public class FilmDaoImpl implements FilmsDao {
 
     @Override
     public void create(Film film) {
-        String sqlQueryFilm = "INSERT INTO PUBLIC.FILMS (NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA)" +
-                "VALUES (?, ?, ?, ?, ?)";
+        String sqlQueryFilm = "INSERT INTO PUBLIC.FILMS (NAME, DESCRIPTION, RELEASE_DATE, DURATION, RATE, MPA)" +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
         jdbcTemplate.update(sqlQueryFilm,
                 film.getName(),
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
                 film.getDuration(),
+                film.getRate(),
                 film.getMpa().getId());
+
+        if (!(film.getGenres() == null) && !film.getGenres().isEmpty()) {
+            for (int i=0; i<film.getGenres().size(); i++) {
+                String sqlQueryGenre = "INSERT INTO PUBLIC.FILM_GENRE (FILM_ID, GENRE_ID) VALUES ( ?, ? )";
+                jdbcTemplate.update(sqlQueryGenre,
+                        getFilmAllFields(film).get().getId(), new ArrayList<>(film.getGenres()).get(i).getId());
+            }
+        }
     }
 
     @Override
     public void change(Film film) {
-        String sqlQuery = "UPDATE PUBLIC.FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?," +
-                "MPA = ? WHERE ID = ?";
+        String sqlQuery = "UPDATE PUBLIC.FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, RATE = ?," +
+                " MPA = ? WHERE ID = ?";
         jdbcTemplate.update(sqlQuery,
                 film.getName(),
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
                 film.getDuration(),
+                film.getRate(),
                 film.getMpa().getId(),
                 film.getId());
+        if (!(film.getGenres() == null) && !film.getGenres().isEmpty()) {
+            jdbcTemplate.update("DELETE FROM PUBLIC.FILM_GENRE WHERE FILM_ID = ?", film.getId());
+            for (int i=0; i<film.getGenres().size(); i++) {
+                SqlRowSet genreRow = jdbcTemplate.queryForRowSet("SELECT * FROM PUBLIC.FILM_GENRE WHERE FILM_ID = ?" +
+                        "AND GENRE_ID = ?", film.getId(),new ArrayList<>(film.getGenres()).get(i).getId());
+                if (!genreRow.next()) {
+                    String sqlQueryGenre = "INSERT INTO PUBLIC.FILM_GENRE (FILM_ID, GENRE_ID) VALUES ( ?, ? )";
+                    jdbcTemplate.update(sqlQueryGenre,
+                            getFilmAllFields(film).get().getId(), new ArrayList<>(film.getGenres()).get(i).getId());
+                }
+            }
+        } else {
+            jdbcTemplate.update("DELETE FROM PUBLIC.FILM_GENRE WHERE FILM_ID = ?", film.getId());
+        }
     }
 
     @Override
     public Collection<Film> getFilmList() {
-        return jdbcTemplate.query("SELECT * FROM PUBLIC.FILMS", this::mapRowToFilms);
+        return jdbcTemplate.query("SELECT *,M.NAME AS FILM_MPA FROM PUBLIC.FILMS AS F " +
+                "JOIN PUBLIC.MPA AS M ON F.MPA = M.ID", this::mapRowToFilms);
     }
 
     @Override
     public Optional<Film> getFilmById(int id) {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT *,M.NAME AS FILM_MPA FROM PUBLIC.FILMS AS F JOIN MPA M on M.ID = F.MPA" +
-                " WHERE ID = ?", id);
-        if (filmRows.next()) {
-            Film film = new Film(
-                    filmRows.getInt("ID"),
-                    filmRows.getString("NAME"),
-                    filmRows.getString("DESCRIPTION"),
-                    filmRows.getDate("RELEASE_DATE").toLocalDate(),
-                    filmRows.getInt("DURATION"),
-                    new Mpa (filmRows.getInt("MPA"), filmRows.getString("FILM_MPA")),
-                    new LinkedHashSet<>() //доделать
-            );
-            return Optional.of(film);
-        } else {
-            return Optional.empty();
-        }
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT F.ID, F.NAME, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION," +
+                        "F.RATE, F.MPA, M.NAME AS FILM_MPA from PUBLIC.FILMS AS F JOIN PUBLIC.MPA AS M ON F.MPA = M.ID" +
+                        " WHERE F.ID = ?", id);
+        return serializationFilm(filmRows);
     }
 
     @Override
     public Optional<Film> getFilmAllFields(Film film) {
-        Film filmFromDb = new Film();
-        LinkedHashSet<Genres> genresFilm = new LinkedHashSet<>();
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT F.ID, F.NAME, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION," +
-                        "F.MPA, M.NAME AS FILM_MPA from PUBLIC.FILMS AS F JOIN PUBLIC.MPA AS M ON F.MPA = M.ID" +
+                        "F.RATE, F.MPA, M.NAME AS FILM_MPA from PUBLIC.FILMS AS F JOIN PUBLIC.MPA AS M ON F.MPA = M.ID" +
                         " WHERE F.NAME = ? AND F.DESCRIPTION = ? AND F.RELEASE_DATE = ? AND F.DURATION = ?", film.getName(),
                         film.getDescription(), film.getReleaseDate(), film.getDuration());
-        if (filmRows.next()) {
-            filmFromDb.setId(filmRows.getInt("ID"));
-            filmFromDb.setName(filmRows.getString("NAME"));
-            filmFromDb.setDescription(filmRows.getString("DESCRIPTION"));
-            filmFromDb.setReleaseDate(filmRows.getDate("RELEASE_DATE").toLocalDate());
-            filmFromDb.setDuration(filmRows.getInt("DURATION"));
-            filmFromDb.setMpa(new Mpa (filmRows.getInt("MPA"), filmRows.getString("FILM_MPA")));
+        return serializationFilm(filmRows);
+    }
+
+    private Optional<Film> serializationFilm (SqlRowSet sqlRowSet) {
+        Film filmFromDb = new Film();
+        LinkedHashSet<Genre> genresFilm = new LinkedHashSet<>();
+        if (sqlRowSet.next()) {
+            filmFromDb.setId(sqlRowSet.getInt("ID"));
+            filmFromDb.setName(sqlRowSet.getString("NAME"));
+            filmFromDb.setDescription(sqlRowSet.getString("DESCRIPTION"));
+            filmFromDb.setReleaseDate(sqlRowSet.getDate("RELEASE_DATE").toLocalDate());
+            filmFromDb.setDuration(sqlRowSet.getInt("DURATION"));
+            filmFromDb.setRate(sqlRowSet.getInt("RATE"));
+            filmFromDb.setMpa(new Mpa (sqlRowSet.getInt("MPA"), sqlRowSet.getString("FILM_MPA")));
         } else {
             return Optional.empty();
         }
-        SqlRowSet genresRows = jdbcTemplate.queryForRowSet("SELECT FG.GENRE_ID, G2.GENRE_NAME AS GENRE FROM PUBLIC.FILM_GENRE AS FG JOIN GENRE G2 ON" +
-                        " G2.ID = FG.GENRE_ID WHERE FILM_ID = ?",
-                        filmFromDb.getId());
+        SqlRowSet genresRows = jdbcTemplate.queryForRowSet("SELECT FG.GENRE_ID, G2.NAME AS GENRE FROM PUBLIC.FILM_GENRE AS FG JOIN GENRE G2 ON" +
+                        " G2.ID = FG.GENRE_ID WHERE FILM_ID = ?", filmFromDb.getId());
         while (genresRows.next()) {
-            genresFilm.add(new Genres(genresRows.getInt("GENRE_ID"), genresRows.getString("GENRE")));
+            genresFilm.add(new Genre(genresRows.getInt("GENRE_ID"), genresRows.getString("GENRE")));
         }
         filmFromDb.setGenres(genresFilm);
         return Optional.of(filmFromDb);
+
     }
     private Film mapRowToFilms(ResultSet resultSet, int rowNum) throws SQLException {
         int id = resultSet.getInt("ID");
@@ -109,8 +129,15 @@ public class FilmDaoImpl implements FilmsDao {
         String description = resultSet.getString("DESCRIPTION");
         LocalDate releaseDate = resultSet.getDate("RELEASE_DATE").toLocalDate();
         int duration = resultSet.getInt("DURATION");
+        int rate = resultSet.getInt("RATE");
         Mpa mpa = new Mpa(resultSet.getInt("MPA"),resultSet.getString("FILM_MPA"));
-        LinkedHashSet<Genres> genres = new LinkedHashSet<>(); // доделать
-        return new Film(id, name, description, releaseDate, duration, mpa, genres);
+        LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+
+        SqlRowSet genresRows = jdbcTemplate.queryForRowSet("SELECT FG.GENRE_ID, G2.NAME AS GENRE FROM PUBLIC.FILM_GENRE AS FG JOIN GENRE G2 ON" +
+                " G2.ID = FG.GENRE_ID WHERE FILM_ID = ?", id);
+        while (genresRows.next()) {
+            genres.add(new Genre(genresRows.getInt("GENRE_ID"), genresRows.getString("GENRE")));
+        }
+        return new Film(id, name, description, releaseDate, duration, rate, mpa, genres);
     }
 }
