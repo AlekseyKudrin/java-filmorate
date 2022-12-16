@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.storage.dao.FilmLikeDao;
 @Component
 public class FilmLikeDaoImpl implements FilmLikeDao {
 
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public FilmLikeDaoImpl(JdbcTemplate jdbcTemplate) {
@@ -20,6 +20,14 @@ public class FilmLikeDaoImpl implements FilmLikeDao {
     public void addLike(int id, int userId) {
         String sqlQuery = "INSERT INTO PUBLIC.FILM_LIKE (FILM_ID, USER_ID)" +
                 "VALUES (?, ?)";
+        jdbcTemplate.update(sqlQuery,
+                id,
+                userId);
+    }
+
+    @Override
+    public void deleteLike(int id, int userId) {
+        String sqlQuery = "DELETE FROM PUBLIC.FILM_LIKE WHERE FILM_ID = ? AND USER_ID = ?";
         jdbcTemplate.update(sqlQuery,
                 id,
                 userId);

@@ -14,7 +14,7 @@ import java.util.Optional;
 @Service
 public class GenreService {
 
-    GenreDao genreDao;
+    private final GenreDao genreDao;
 
     @Autowired
     public GenreService(GenreDao genreDao) {

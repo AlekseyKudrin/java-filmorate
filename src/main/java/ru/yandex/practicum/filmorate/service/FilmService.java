@@ -55,6 +55,7 @@ public class FilmService {
 
     public void deleteLike(int id, int userId) {
         if (userId > 0) {
+            filmStorage.deleteLike(id, userId);
             log.info("Like successfully deleting");
         } else {
             throw new ValidationException("Id user can't be negative");

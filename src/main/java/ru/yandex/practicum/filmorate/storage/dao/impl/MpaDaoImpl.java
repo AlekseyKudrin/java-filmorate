@@ -15,7 +15,7 @@ import java.util.Optional;
 @Component
 public class MpaDaoImpl implements MpaDao {
 
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public MpaDaoImpl(JdbcTemplate jdbcTemplate) {

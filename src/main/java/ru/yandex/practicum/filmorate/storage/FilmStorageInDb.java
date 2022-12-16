@@ -16,9 +16,9 @@ import java.util.Optional;
 @Component
 public class FilmStorageInDb implements FilmStorage {
 
-    FilmsDao filmsDao;
+    private final FilmsDao filmsDao;
 
-    FilmLikeDao filmLikeDao;
+    private final FilmLikeDao filmLikeDao;
 
     @Autowired
     public FilmStorageInDb(FilmsDao filmsDao, FilmLikeDao filmLikeDao) {
@@ -67,6 +67,11 @@ public class FilmStorageInDb implements FilmStorage {
     @Override
     public void addLike(int id, int userId) {
         filmLikeDao.addLike(id, userId);
+    }
+
+    @Override
+    public void deleteLike(int id, int userId) {
+        filmLikeDao.deleteLike(id, userId);
     }
 
     @Override

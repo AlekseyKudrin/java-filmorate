@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Component
 public class FilmDaoImpl implements FilmsDao {
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public FilmDaoImpl(JdbcTemplate jdbcTemplate) {

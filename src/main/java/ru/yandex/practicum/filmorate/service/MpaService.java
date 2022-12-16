@@ -14,7 +14,7 @@ import java.util.Optional;
 @Service
 public class MpaService {
 
-    MpaDao mpaDao;
+    private final MpaDao mpaDao;
 
     @Autowired
     public MpaService(MpaDao mpaDao) {

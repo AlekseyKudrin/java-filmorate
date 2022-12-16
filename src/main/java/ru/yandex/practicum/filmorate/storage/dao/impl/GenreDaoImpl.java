@@ -15,7 +15,7 @@ import java.util.Optional;
 @Component
 public class GenreDaoImpl implements GenreDao {
 
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public GenreDaoImpl(JdbcTemplate jdbcTemplate) {

@@ -6,4 +6,6 @@ public interface FilmLikeDao {
     SqlRowSet getPopFilms(int count);
 
     void addLike(int id, int userId);
+
+    void deleteLike(int id, int userId);
 }

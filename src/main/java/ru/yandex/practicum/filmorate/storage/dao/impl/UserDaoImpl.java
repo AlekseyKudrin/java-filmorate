@@ -19,7 +19,7 @@ import java.util.Optional;
 @Component
 public class UserDaoImpl implements UsersDao {
 
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public UserDaoImpl(JdbcTemplate jdbcTemplate) {

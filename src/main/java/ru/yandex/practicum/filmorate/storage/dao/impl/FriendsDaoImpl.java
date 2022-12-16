@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 public class FriendsDaoImpl implements FriendsDao {
 
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public FriendsDaoImpl(JdbcTemplate jdbcTemplate) {

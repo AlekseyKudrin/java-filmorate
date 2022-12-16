@@ -12,8 +12,8 @@ import java.util.*;
 @Component
 public class UserStorageInDb implements UserStorage {
 
-    UsersDao usersDao;
-    FriendsDao friendsDao;
+    private final UsersDao usersDao;
+    private final FriendsDao friendsDao;
 
 
     @Autowired
