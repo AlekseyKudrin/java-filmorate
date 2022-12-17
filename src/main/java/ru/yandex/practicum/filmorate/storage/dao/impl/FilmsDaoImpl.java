@@ -19,11 +19,11 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 
 @Component
-public class FilmDaoImpl implements FilmsDao {
+public class FilmsDaoImpl implements FilmsDao {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public FilmDaoImpl(JdbcTemplate jdbcTemplate) {
+    public FilmsDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

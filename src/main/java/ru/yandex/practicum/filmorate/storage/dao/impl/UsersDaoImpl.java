@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class UserDaoImpl implements UsersDao {
+public class UsersDaoImpl implements UsersDao {
 
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public UserDaoImpl(JdbcTemplate jdbcTemplate) {
+    public UsersDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
