@@ -7,12 +7,14 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
+import java.util.Optional;
+
 @Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
 
-    public FilmService filmService;
+    private final FilmService filmService;
 
     @Autowired
     public FilmController(FilmService filmService) {
@@ -21,17 +23,15 @@ public class FilmController {
 
 
     @PostMapping
-    public Film createFilm(@RequestBody Film film) {
-        log.info("Creating Film");
-        filmService.create(film);
-        return film;
+    public Optional<Film> createFilm(@RequestBody Film film) {
+        log.info("Creating film");
+        return filmService.create(film);
     }
 
     @PutMapping
-    public Film changeFilm(@RequestBody Film film) {
+    public Optional<Film> changeFilm(@RequestBody Film film) {
         log.info("Film change");
-        filmService.change(film);
-        return film;
+        return filmService.change(film);
     }
 
     @PutMapping("{id}/like/{userId}")
@@ -47,7 +47,7 @@ public class FilmController {
     }
 
     @GetMapping("{id}")
-    public Film getFilm(@PathVariable int id) {
+    public Optional<Film> getFilm(@PathVariable int id) {
         log.info("Return film by Id");
         return filmService.getFilm(id);
     }
@@ -55,7 +55,7 @@ public class FilmController {
     @GetMapping("popular")
     public Collection<Film> getPopFilms(@RequestParam(defaultValue = "10") Integer count) {
         log.info("Return list popular films");
-        return filmService.returnPopFilms(count);
+        return filmService.getPopFilms(count);
     }
 
     @DeleteMapping("{id}/like/{userId}")
